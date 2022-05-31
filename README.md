@@ -33,7 +33,7 @@ Save the generated private and public keys for use in the nix configuration and 
 
 Download the image from `https://nixos.org/download.html#nixos-iso`
 
-Burn it to a USB drive or disc: `sudo dd if=nix.iso of=/dev/rdiskN`
+Burn it to a USB drive or disc: `sudo cp nix.iso /dev/rdiskN`
 
 ### Boot the media
 
