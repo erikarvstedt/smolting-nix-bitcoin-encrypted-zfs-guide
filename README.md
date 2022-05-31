@@ -288,7 +288,7 @@ Edit the nix-bitcoin-node/configuration.nix
   ### ELECTRS
   services.electrs.enable = true;
 
-  nix-bitcoin.configVersion = "0.0.65";
+  nix-bitcoin.configVersion = "0.0.70";
 }
 ```
 
@@ -336,28 +336,42 @@ Use the __RTL password__ to log in
 ### Connect Zeus over local network:
 
 #### Assumptions:
-1. Your local subnet is `192.168.1.1` through `192.168.1.255`
-2. You have enabled Core Lightning (`clightning`) and Ride the Lightning (`rtl`) in your deployment `configuration.nix`:
-	```
-	services.clightning.enable = true;
-	services.rtl.enable = true;
-	services.rtl.nodes.clightning = true;
-	```
+Your local subnet is `192.168.1.1` through `192.168.1.255`
 
-In your deployment `configuration.nix` file, either add or edit the networking.firewall.extraCommands settings:
+#### Config
+Add the following to your `configuration.nix` and deploy:
+```nix
+services.clightning.enable = true;
+services.clightning-rest = {
+  enable = true;
+  tor.enforce = false;
+};
 
-```
+# Open clightning-rest port
 networking.firewall.extraCommands = ''
-    iptables -A nixos-fw -p tcp --source 192.168.1.0/24 --dport 3001 -j nixos-fw-accept
+  iptables -A nixos-fw -p tcp --source 192.168.1.0/24 --dport 3001 -j nixos-fw-accept
 '';
+
+# Add `lndconnect-local` binary
+environment.systemPackages = let
+  clightning-rest = config.services.clightning-rest;
+  lndconnect-local = pkgs.writeScriptBin "lndconnect-local" ''
+    exec ${config.nix-bitcoin.pkgs.lndconnect}/bin/lndconnect \
+     --host=192.168.1.0 \
+     --port=${toString clightning-rest.port} \
+     --tlscertpath='${clightning-rest.dataDir}/certs/certificate.pem' \
+     --adminmacaroonpath='${clightning-rest.dataDir}/certs/access.macaroon' \
+     --configfile=/dev/null "$@"
+  '';
+in [
+  lndconnect-local
+];
 ```
 
-and widen up the `cl-rest` service's allowed IP addresses. :
-
-```
- systemd.services.cl-rest.serviceConfig.IPAddressAllow = lib.mkForce "127.0.0.1/32 ::1/128 169.254.0.0/16 192.168.1.0/24";
-
-```
+#### Configure Zeus
+- Run command `lndconnect-local` on your node to print a QR code
+- Open Zeus and select `Scan lndconnect config` (at the bottom) and scan the QR code
+- Set `Node interface` to `c-lightning-REST`
 
 ### Change your lightning node alias
 
