@@ -378,7 +378,7 @@ in [
 In your deployment environment's `configuration.nix` file, either add or edit the clightning `extraConfig` setting:
 
 ```
-  services.clightning.extraConfig = ''
-    alias=bad_for_education
-  '';
+services.clightning.extraConfig = ''
+  alias=bad_for_education
+'';
 ```
