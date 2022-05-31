@@ -6,17 +6,16 @@
 
 ### Terminology
 
-* nix - a language
-* nix - a packaging system
-* nixOS - a linux distribution
-* nix-bitcoin - packages and modules which turn a `nixOS` host into a bitcoin node
+* Nix - a language and build system
+* NixOS - a Linux distribution
+* nix-bitcoin - packages and modules which turn a `NixOS` host into a bitcoin node
 
 ### Strategy
 
 Setting up a `nix-bitcoin` node is divided into two phases:
 
-1. Preparing host machine and installing the `nixOS` Linux distribution to it
-2. Creating a `nix` deployment environment on a different machine, and then deploying the `nix-bitcoin` packages and modules to the `nixOS` host machine. Going forward, this machine will act as your terminal from which you will administrate your bitcoin node.
+1. Preparing host machine and installing the `NixOS` Linux distribution to it
+2. Creating a `nix` deployment environment on a different machine, and then deploying the `nix-bitcoin` packages and modules to the `NixOS` host machine. Going forward, this machine will act as your terminal from which you will administrate your bitcoin node.
 
 ## 1. Preparation
 
@@ -231,7 +230,7 @@ $ cd nix-bitcoin-node
 $ cp -r ../nix-bitcoin/examples/{nix-bitcoin-release.nix,configuration.nix,shell.nix,krops,.gitignore} .
 ```
 
-### Configure for remote deployment to nixOS machine
+### Configure for remote deployment to NixOS machine
 
 Copy the `id_ed25519` ssh private key to `~/.ssh`
 
@@ -255,7 +254,7 @@ Edit `nix-bitcoin-node/krops/deploy.nix`:
 target = "root@bitcoin-node";
 ```
 
-Retrieve remote nixOS hardware-configuration.nix and configuration.nix:
+Retrieve remote NixOS hardware-configuration.nix and configuration.nix:
 
 ```bash
 $ scp bitcoin-node:/etc/nixos/hardware-configuration.nix hardware-configuration.nix
