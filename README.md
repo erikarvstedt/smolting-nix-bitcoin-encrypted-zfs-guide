@@ -49,12 +49,12 @@ This setup will make use of 6 disks in a `raidz2` configuration.
 
 Set up environment variables
 ```bash
-$ $DISK1=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DUUUUUUU
-$ $DISK2=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DVVVVVVV
-$ $DISK3=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DWWWWWWW
-$ $DISK4=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DXXXXXXX
-$ $DISK5=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DYYYYYYY
-$ $DISK6=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DZZZZZZZ
+$ DISK1=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DUUUUUUU
+$ DISK2=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DVVVVVVV
+$ DISK3=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DWWWWWWW
+$ DISK4=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DXXXXXXX
+$ DISK5=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DYYYYYYY
+$ DISK6=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DZZZZZZZ
 ```
 
 Create the `EFI` boot partition
