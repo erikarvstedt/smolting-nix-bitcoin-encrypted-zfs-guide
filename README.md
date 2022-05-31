@@ -24,8 +24,8 @@ Setting up a `nix-bitcoin` node is divided into two phases:
 On a separate machine:
 
 ```
-$ ssh-keygen -t ed25519
-$ cat ~/.ssh/id_ed25519.pub
+ssh-keygen -t ed25519
+cat ~/.ssh/id_ed25519.pub
 ```
 Save the generated private and public keys for use in the nix configuration and the remote deployment machine
 
@@ -49,47 +49,47 @@ This setup will make use of 6 disks in a `raidz2` configuration.
 
 Set up environment variables
 ```bash
-$ DISK1=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DUUUUUUU
-$ DISK2=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DVVVVVVV
-$ DISK3=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DWWWWWWW
-$ DISK4=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DXXXXXXX
-$ DISK5=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DYYYYYYY
-$ DISK6=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DZZZZZZZ
+DISK1=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DUUUUUUU
+DISK2=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DVVVVVVV
+DISK3=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DWWWWWWW
+DISK4=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DXXXXXXX
+DISK5=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DYYYYYYY
+DISK6=/dev/disk/by-id/ata-WDC_WD40EFZX-68AWUN0_WD-WX12DZZZZZZZ
 ```
 
 Create the `EFI` boot partition
 ```bash
-$ sgdisk -n3:1M:+512M -t3:EF00 $DISK1
+sgdisk -n3:1M:+512M -t3:EF00 $DISK1
 ```
 
 Create the OS partition
 ```bash
-$ sgdisk -n1:0:0 -t1:BF01 $DISK1
+sgdisk -n1:0:0 -t1:BF01 $DISK1
 ```
 
 Copy the partition table across all devices
 ```bash
-$ sfdisk --dump $DISK1 | sfdisk $DISK2
-$ sfdisk --dump $DISK1 | sfdisk $DISK3
-$ sfdisk --dump $DISK1 | sfdisk $DISK4
-$ sfdisk --dump $DISK1 | sfdisk $DISK5
-$ sfdisk --dump $DISK1 | sfdisk $DISK6
+sfdisk --dump $DISK1 | sfdisk $DISK2
+sfdisk --dump $DISK1 | sfdisk $DISK3
+sfdisk --dump $DISK1 | sfdisk $DISK4
+sfdisk --dump $DISK1 | sfdisk $DISK5
+sfdisk --dump $DISK1 | sfdisk $DISK6
 ```
 
 Format the boot partitions:
 ```bash
-$ mkfs.vfat $DISK1-part3
-$ mkfs.vfat $DISK2-part3
-$ mkfs.vfat $DISK3-part3
-$ mkfs.vfat $DISK4-part3
-$ mkfs.vfat $DISK5-part3
-$ mkfs.vfat $DISK6-part3
+mkfs.vfat $DISK1-part3
+mkfs.vfat $DISK2-part3
+mkfs.vfat $DISK3-part3
+mkfs.vfat $DISK4-part3
+mkfs.vfat $DISK5-part3
+mkfs.vfat $DISK6-part3
 ```
 
 ### ZFS raidz2 Pool creation
 
 ```bash
-$ zpool create -o ashift=12 -O atime=off -O encryption=aes-256-gcm \
+zpool create -o ashift=12 -O atime=off -O encryption=aes-256-gcm \
              -O acltype=posixacl -O keyformat=passphrase -O xattr=sa \
              -O mountpoint=none -O compression=lz4 \
              zroot raidz2 \
@@ -100,40 +100,40 @@ _(At this point, you will be prompted for a disk encryption passphrase)_
 
 Create the `zfs` filesystems:
 ```bash
-$ zfs create -o mountpoint=none zroot/root
-$ zfs create -o mountpoint=legacy zroot/root/nixos
-$ zfs create -o mountpoint=legacy zroot/var
-$ zfs create -o mountpoint=legacy zroot/home
+zfs create -o mountpoint=none zroot/root
+zfs create -o mountpoint=legacy zroot/root/nixos
+zfs create -o mountpoint=legacy zroot/var
+zfs create -o mountpoint=legacy zroot/home
 ```
 
 ### Mount install targets
 
 Mount the `Nixos` root and create child mountpoints:
 ```bash
-$ mount -t zfs zroot/root/nixos /mnt
+mount -t zfs zroot/root/nixos /mnt
 
-$ mkdir /mnt/home
-$ mkdir /mnt/var
-$ mkdir /mnt/boot
+mkdir /mnt/home
+mkdir /mnt/var
+mkdir /mnt/boot
 ```
 
 Mount the child filesystem mountpoints and `EFI` boot partition:
 ```bash
-$ mount -t zfs zroot/home /mnt/home
-$ mount -t zfs zroot/var /mnt/var
-$ mount /mnt/boot $DISK1-part3
+mount -t zfs zroot/home /mnt/home
+mount -t zfs zroot/var /mnt/var
+mount /mnt/boot $DISK1-part3
 ```
 
 ### Generate config:
 ```bash
-$ nixos-generate-config --root /mnt
+nixos-generate-config --root /mnt
 ```
 
 
 ### Retrieve host id:
 Get the __HOST ID__ of the machine, save it for later:
 ```bash
-$ head -c 8 /etc/machine-id
+head -c 8 /etc/machine-id
 ```
 
 ### Customize the `configuration.nix` file:
@@ -172,13 +172,13 @@ services.zfs.autoScrub.enable = true;
 ### Install
 
 ```bash
-$ nixos-install
+nixos-install
 ```
 _(You will be prompted to create the root password)_
 
 ### Get the host's IP address:
 ```bash
-$ ifconfig
+ifconfig
 ```
 
 ## 3. Nix Deployment Environment
@@ -186,48 +186,48 @@ $ ifconfig
 ### Create a Debian VM / Container / Box
 
 ```bash
-$ sudo apt install curl git gnupg2 dirmgr
+sudo apt install curl git gnupg2 dirmgr
 ```
 
 ### Retrieve nix install script, signature, and public signing key
 ```bash
-$ curl -o install-nix-2.7.0 https://releases.nixos.org/nix/nix-2.7.0/install
-$ curl -o install-nix-2.7.0.asc https://releases.nixos.org/nix/nix-2.7.0/install.asc
+curl -o install-nix-2.7.0 https://releases.nixos.org/nix/nix-2.7.0/install
+curl -o install-nix-2.7.0.asc https://releases.nixos.org/nix/nix-2.7.0/install.asc
 ```
 
 ### Verify install script
 
 ```bash
-$ gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys B541D55301270E0BCF15CA5D8170B4726D7198DE
-$ gpg2 --verify ./install-nix-2.7.0.asc
+gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys B541D55301270E0BCF15CA5D8170B4726D7198DE
+gpg2 --verify ./install-nix-2.7.0.asc
 ```
 
 ### Run install script
 
 ```bash
-$ sh ./install-nix-2.7.0 --daemon
+sh ./install-nix-2.7.0 --daemon
 ```
 
 ### Setup Deployment Directory
 
 ```bash
-$ git clone https://github.com/fort-nix/nix-bitcoin
+git clone https://github.com/fort-nix/nix-bitcoin
 ```
 
 ```bash
-$ cd nix-bitcoin/examples
-$ nix-shell
+cd nix-bitcoin/examples
+nix-shell
 ```
 
 ```bash
-$ fetch-release > nix-bitcoin-release.nix
+fetch-release > nix-bitcoin-release.nix
 ```
 
 ```bash
-$ cd ../../
-$ mkdir nix-bitcoin-node
-$ cd nix-bitcoin-node
-$ cp -r ../nix-bitcoin/examples/{nix-bitcoin-release.nix,configuration.nix,shell.nix,krops,.gitignore} .
+cd ../../
+mkdir nix-bitcoin-node
+cd nix-bitcoin-node
+cp -r ../nix-bitcoin/examples/{nix-bitcoin-release.nix,configuration.nix,shell.nix,krops,.gitignore} .
 ```
 
 ### Configure for remote deployment to NixOS machine
@@ -236,7 +236,7 @@ Copy the `id_ed25519` ssh private key to `~/.ssh`
 
 Change the permissions of the private key:
 ```bash
-$ chmod go-rwx ~/.ssh/id_ed25519
+chmod go-rwx ~/.ssh/id_ed25519
 ```
 
 in `~/.ssh/config`:
@@ -257,8 +257,8 @@ target = "root@bitcoin-node";
 Retrieve remote NixOS hardware-configuration.nix and configuration.nix:
 
 ```bash
-$ scp bitcoin-node:/etc/nixos/hardware-configuration.nix hardware-configuration.nix
-$ scp bitcoin-node:/etc/nixos/configuration.nix remote-configuration.nix
+scp bitcoin-node:/etc/nixos/hardware-configuration.nix hardware-configuration.nix
+scp bitcoin-node:/etc/nixos/configuration.nix remote-configuration.nix
 ```
 
 Edit the nix-bitcoin-node/configuration.nix
@@ -294,8 +294,8 @@ Edit the nix-bitcoin-node/configuration.nix
 
 Enter deployment environment:
 ```bash
-$ nix-shell
-$ deploy
+nix-shell
+deploy
 ```
 Following deployment, you will have a bitcoin node. Do not be surprised if resource use is intensive for hours or perhaps a couple days. `bitcoind` will perform its download and validation of the entire blockchain (less than half a terabyte, given pruning wasn't enabled), and `c-lightning` will also take some time to bootstrap following `bitcoind`'s initial block download (IBD).
 
