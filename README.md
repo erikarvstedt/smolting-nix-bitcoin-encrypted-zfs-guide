@@ -349,9 +349,6 @@ In your deployment `configuration.nix` file, either add or edit the networking.f
 ```
 networking.firewall.extraCommands = ''
     iptables -A nixos-fw -p tcp --source 192.168.1.0/24 --dport 3001 -j nixos-fw-accept
-    iptables -A nixos-fw -p udp --source 192.168.1.0/24 --dport 3001 -j nixos-fw-accept
-    iptables -A nixos-fw -p tcp --source 192.168.1.0/24 --dport 4001 -j nixos-fw-accept
-    iptables -A nixos-fw -p udp --source 192.168.1.0/24 --dport 4001 -j nixos-fw-accept
 '';
 ```
 
